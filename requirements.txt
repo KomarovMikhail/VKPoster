@@ -1,7 +1,12 @@
 certifi==2018.8.24
 chardet==3.0.4
+Click==7.0
 enum34==1.1.6
+Flask==1.0.2
 idna==2.7
+itsdangerous==0.24
+Jinja2==2.10
+MarkupSafe==1.0
 numpy==1.15.2
 pandas==0.23.4
 python-dateutil==2.7.3
@@ -10,3 +15,4 @@ requests==2.19.1
 six==1.11.0
 urllib3==1.23
 vk-api==11.2.1
+Werkzeug==0.14.1
