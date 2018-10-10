@@ -144,5 +144,5 @@ def send_report(result, vk):
     text = '(Сообщение от бота)\nПост с поздравлнеием в отложке'.format(len(result))
     if len(result) > 0:
         vk.messages.send(peer_id='2000000307', message=text)
-    print(result)
+    # print(result)
 
