@@ -42,13 +42,12 @@ def get_vk_id(vk_url):
     return vk_url[7:]
 
 
-def get_spreadsheet(from_path):
+def get_today_list(from_path):
     spreadsheet = pd.read_csv(from_path)
 
     result = []
     for i in range(1, len(spreadsheet['Unnamed: 0'])):
         row = spreadsheet.loc[i, :]
-
         if today(str(row[5])):
             buf = dict()
             buf['name'] = str(row[0])
@@ -67,14 +66,6 @@ def today(date):
     return d.month == month and d.day == day
 
 
-def get_current(mem_list):
-    result = []
-    for member in mem_list:
-        if today(member['date']):
-            result.append(member)
-    return result
-
-
 def make_name(name):
     tokens = name.split(' ')
     if tokens[1][0] == '(':
@@ -86,9 +77,10 @@ def make_name(name):
 def make_message(item):
     w = Wishes()
     name = make_name(item['name'])
-    message = 'Хе-хей!\n\nА сегодня свой день рождения празднует @{0} ({1})! От имени всего {2} мы желаем тебе {3}, {4} и {5}. ' \
-              '{6} {7}\n\nТвой Фотон.'.format(item['id'], name, w.get_from(), w.get_common(), w.get_study(), w.get_camp(),
-                               w.get_state(), w.get_hb())
+    message = 'Хе-хей!\n\nА сегодня свой день рождения празднует @{0} ({1})! ' \
+              'От имени всего {2} мы желаем тебе {3}, {4} и {5}. ' \
+              '{6} {7}\n\nТвой Фотон.'.format(item['id'], name, w.get_from(),
+                                              w.get_common(), w.get_study(), w.get_camp(), w.get_state(), w.get_hb())
     return message
 
 
@@ -105,11 +97,13 @@ def need_to_post(item, vk):
 
 
 def get_photo(photo_url):
+    if photo_url == 'nan':
+        return ''
     return re.search(r'photo[0123456789-]+_[0123456789-]+', photo_url).group(0)
 
 
 def post_congratulation(item, vk):
-    attachment_photo = get_photo(get_photo(item['photo']))
+    attachment_photo = get_photo(item['photo'])
 
     d = datetime.now() + timedelta(days=2)
     unix_time = int(time.mktime(d.timetuple()))
@@ -127,22 +121,20 @@ def post_congratulation(item, vk):
 
 
 def make_step():
-    mem_list = get_spreadsheet(CSV_URL)
-    today_list = get_current(mem_list)
+    today_list = get_today_list(CSV_URL)
 
     vk = vk_auth(LOGIN, ACCESS_TOKEN)
+    vk.messages.send(peer_id='75196285', message="Some text")
 
-    result = []
-    for item in today_list:
-        if need_to_post(item, vk):
-            result.append(post_congratulation(item, vk))
-
-    send_report(result, vk)
+    # result = []
+    # for item in today_list:
+    #     if need_to_post(item, vk):
+    #         result.append(post_congratulation(item, vk))
+    #
+    # send_report(result, vk)
 
 
 def send_report(result, vk):
     text = '(Сообщение от бота)\nПост с поздравлнеием в отложке'.format(len(result))
     if len(result) > 0:
         vk.messages.send(peer_id='2000000307', message=text)
-    # print(result)
-
