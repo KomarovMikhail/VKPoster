@@ -10,7 +10,7 @@ import re
 
 
 def vk_auth(login, access_token):
-    session = vk_api.VkApi(login=login, token=access_token)
+    session = vk_api.VkApi(login=login, token=access_token, app_id=6724339, api_version='5.84')
 
     try:
         session.auth(token_only=True)
@@ -124,12 +124,12 @@ def make_step():
     today_list = get_today_list(CSV_URL)
 
     vk = vk_auth(LOGIN, ACCESS_TOKEN)
-    # result = vk.wall.post(
-    #     owner_id=-GROUP_ID,
-    #     from_group=1,
-    #     message="Test post",
-    # )
-    vk.messages.send(peer_id='75196285', message="Some text")
+    result = vk.wall.post(
+        owner_id=-GROUP_ID,
+        from_group=1,
+        message="Test post",
+    )
+    # vk.messages.send(peer_id='75196285', message="Some text")
 
     # result = []
     # for item in today_list:
